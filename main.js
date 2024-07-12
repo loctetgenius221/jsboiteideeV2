@@ -1,6 +1,7 @@
 // @ts-nocheck
 document.addEventListener("DOMContentLoaded", function () {
   // On récupère nos données
+  const formSection = document.getElementById("form-section");
   const formulaire = document.getElementById("formulaire");
   const libelleInput = document.getElementById("libelle");
   const categorieSelect = document.getElementById("categorie");
@@ -10,69 +11,66 @@ document.addEventListener("DOMContentLoaded", function () {
   const categorieError = document.getElementById("categorieError");
   const messageError = document.getElementById("messageError");
   const listIdee = document.getElementById("listIdee");
-  const generalError = document.getElementById("generalError"); // Ajout d'un élément pour afficher les erreurs générales
+  const generalError = document.getElementById("generalError");
 
   const tableCategorie = ["politique", "économie", "social", "culture"];
 
-  let idee = JSON.parse(localStorage.getItem("idee")) || []; // Charger les données depuis le local storage
+  let idee = JSON.parse(localStorage.getItem("idee")) || [];
 
-  afficherIdees(); // Afficher les idées au chargement de la page
+  afficherIdees();
 
-  // On déclare nos écouteurs d'événements pour pouvoir faire la validation dès que le champ perd le focus
   libelleInput.addEventListener("blur", validerLibelle);
   categorieSelect.addEventListener("blur", validerCategorie);
   messageInput.addEventListener("blur", validerMessage);
 
-  // Ajout de l'écouteur d'événement pour la soumission du formulaire
   formulaire.addEventListener("submit", function (event) {
-    event.preventDefault(); // Empêcher l'envoi du formulaire par défaut
+    event.preventDefault();
 
-    // Validation des champs
     const isLibelleValid = validerLibelle();
     const isCategorieValid = validerCategorie();
     const isMessageValid = validerMessage();
 
-    // Si l'un des champs n'est pas valide, afficher les erreurs
     if (!isLibelleValid || !isCategorieValid || !isMessageValid) {
-      // Si aucun champ n'est rempli, afficher un message général
       if (
         !libelleInput.value &&
         !categorieSelect.value &&
         !messageInput.value
       ) {
-        generalError.textContent = "Veuillez remplir tous les champs requis";
-        generalError.style.display = "block";
-        formulaire.style.display = "none";
-
-        setTimeout(() => {
-          generalError.style.display = "none";
-          formulaire.style.display = "block";
-        }, 2000);
+        afficherPopupErreur("Veuillez remplir tous les champs requis");
       }
     } else {
-      // Ajouter les données au tableau
       ajouterIdee();
-
-      // Réinitialiser le formulaire
       formulaire.reset();
     }
   });
 
-  // Fonction pour ajouter les données au tableau et les sauvegarder dans le local storage
+  messageInput.addEventListener("input", function () {
+    let message = messageInput.value.trim();
+    if (message.length > 255) {
+      messageInput.value = message.substring(0, 255);
+    }
+  });
+
+  libelleInput.addEventListener("input", function () {
+    let libelle = libelleInput.value.trim();
+    if (libelle.length > 50) {
+      libelleInput.value = libelle.substring(0, 50);
+    }
+  });
+
   function ajouterIdee() {
     let nouvelleIdee = {
       libelle: libelleInput.value.trim(),
       categorie: categorieSelect.value,
       message: messageInput.value.trim(),
-      approuvee: false, // Nouveau champ pour l'approbation
+      approuvee: false,
     };
 
     idee.push(nouvelleIdee);
-    localStorage.setItem("idee", JSON.stringify(idee)); // Sauvegarder les données dans le local storage
+    localStorage.setItem("idee", JSON.stringify(idee));
     afficherIdees();
   }
 
-  // Fonction pour afficher les idées sous forme de cartes
   function afficherIdees() {
     listIdee.innerHTML = "";
 
@@ -126,25 +124,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Fonction pour supprimer une idée
   function supprimerIdee(index) {
     idee.splice(index, 1);
     localStorage.setItem("idee", JSON.stringify(idee));
     afficherIdees();
   }
 
-  // Fonction pour approuver une idée
   function approuverIdee(index) {
     idee[index].approuvee = true;
     localStorage.setItem("idee", JSON.stringify(idee));
     afficherIdees();
   }
 
-  // Fonction pour désapprouver une idée
   function desapprouverIdee(index) {
     idee[index].approuvee = false;
     localStorage.setItem("idee", JSON.stringify(idee));
     afficherIdees();
+  }
+
+  function afficherPopupErreur(message) {
+    const generalErrorPopup = document.getElementById("generalErrorPopup");
+
+    generalErrorPopup.textContent = message;
+    generalErrorPopup.style.display = "block";
+    formSection.style.display = "none";
+
+    setTimeout(() => {
+      generalErrorPopup.style.display = "none";
+      formSection.style.display = "flex";
+    }, 2000);
   }
 
   // On crée nos fonctions pour valider chaque champ

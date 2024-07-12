@@ -42,6 +42,7 @@
                 name="message"
                 id="message"
                 placeholder="votre message..."
+                maxlength="255"
               ></textarea>
               <span class="error-message" id="messageError"></span>
             </div>
@@ -57,12 +58,7 @@
           />
         </div>
       </section>
-      <div
-        id="generalError"
-        class="generalError"
-        style="display: none; color: red"
-      ></div>
-      <div id="listIdee" class="list-idee"></div>
+      <div id="generalErrorPopup" class="error-popup"></div>
       <section class="idee-conteneur">
         <div id="listIdee" class="card-container"></div>
       </section>
