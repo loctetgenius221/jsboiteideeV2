@@ -8,10 +8,10 @@
 }
 
 body {
-  width: 1200px;
+  width: 1280px;
   margin: 0 auto;
   padding: 50px 0;
-  background: #f3f2f2;
+  background: #ffffff;
 }
 
 .form-section {
@@ -21,7 +21,19 @@ body {
   background: #fff;
   padding: 20px;
   border-radius: 25px;
-  box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0px 5px 50px rgba(0, 0, 0, 0.1); */
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.generalError {
+  text-align: center;
 }
 
 .form-section .form-conteneur {
@@ -85,7 +97,54 @@ body {
 
 .img-content img {
   width: 400px;
-  height: 500px;
-  border-radius: 25px;
+  height: 100%;
+  border-radius: 5px;
   object-fit: cover;
+}
+
+/*  */
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.card p {
+  margin: 8px 0;
+}
+
+.card-category {
+  font-weight: bold;
+  color: #333;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-buttons button {
+  margin-top: 8px;
+}
+
+.approved {
+  border: 2px solid green;
+}
+
+.disapproved {
+  border: 2px solid red;
 }

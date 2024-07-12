@@ -9,8 +9,8 @@
   <body>
     <div id="container">
       <!-- Section contenant le formulaire et une img -->
-      <section class="form-section">
-        <div class="form-conteneur">
+      <section class="form-section" id="form-section">
+        <div id="form-conteneur" class="form-conteneur">
           <h1>Formulaire d'ajout d'idée</h1>
           <form id="formulaire" class="formulaire">
             <div class="formgroup">
@@ -19,7 +19,7 @@
                 <input
                   type="text"
                   placeholder="Libellé..."
-                  id="libelle"<span class="error-message" id="messageError"></span>
+                  id="libelle"
                   name="libelle"
                 />
                 <span class="error-message" id="libelleError"></span>
@@ -33,7 +33,7 @@
                   <option value="social">Social</option>
                   <option value="culture">Culture</option>
                 </select>
-                <span class="error-message" id="categoryError"></span>
+                <span class="error-message" id="categorieError"></span>
               </div>
             </div>
             <div class="inputBox">
@@ -57,7 +57,17 @@
           />
         </div>
       </section>
-      <section class="idee-conteneur"></section>
+      <div
+        id="generalError"
+        class="generalError"
+        style="display: none; color: red"
+      ></div>
+      <div id="listIdee" class="list-idee"></div>
+      <section class="idee-conteneur">
+        <div id="listIdee" class="card-container"></div>
+      </section>
     </div>
+
+    <script src="main.js"></script>
   </body>
 </html>
