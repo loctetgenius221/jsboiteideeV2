@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  width: 1280px;
+  margin: 0 auto;
+  padding: 50px 0;
+  background: #ffffff;
+}
+
+.form-section {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  background: #fff;
+  padding: 20px;
+  border-radius: 25px;
+  /* box-shadow: 0px 5px 50px rgba(0, 0, 0, 0.1); */
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.generalError {
+  text-align: center;
+}
+
+.form-section .form-conteneur {
+  width: 75%;
+}
+
+.form-section .form-conteneur h1 {
+  margin-left: 20px;
+  padding-left: 5px;
+  border-left: 5px solid #6fd0e0;
+  transition: 0.3s;
+}
+
+.form-conteneur .formulaire {
+  width: 100%;
+  position: relative;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formulaire .formgroup {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.formulaire .inputBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputBox label {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.inputBox input,
+.inputBox select,
+.inputBox textarea {
+  position: relative;
+  padding: 10px 20px;
+  border: 1px solid #d9d9d9;
+  outline: none;
+}
+
+.inputBox input[type="submit"] {
+  background: #6fd0e0;
+  color: #fff;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+.inputBox textarea {
+  height: 250px;
+}
+
+.img-content img {
+  width: 400px;
+  height: 100%;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+/*  */
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.card p {
+  margin: 8px 0;
+}
+
+.card-category {
+  font-weight: bold;
+  color: #333;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-buttons button {
+  margin-top: 8px;
+}
+
+.approved {
+  border: 2px solid green;
+}
+
+.disapproved {
+  border: 2px solid red;
+}

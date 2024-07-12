@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boite à idée - Version 2</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="container">
+      <!-- Section contenant le formulaire et une img -->
+      <section class="form-section" id="form-section">
+        <div id="form-conteneur" class="form-conteneur">
+          <h1>Formulaire d'ajout d'idée</h1>
+          <form id="formulaire" class="formulaire">
+            <div class="formgroup">
+              <div class="inputBox">
+                <label for="">Libellé</label>
+                <input
+                  type="text"
+                  placeholder="Libellé..."
+                  id="libelle"
+                  name="libelle"
+                />
+                <span class="error-message" id="libelleError"></span>
+              </div>
+              <div class="inputBox">
+                <label for="categorie">Catégorie</label>
+                <select name="categorie" id="categorie">
+                  <option value="">Sélectionnez une catégorie</option>
+                  <option value="politique">Politique</option>
+                  <option value="économie">Économie</option>
+                  <option value="social">Social</option>
+                  <option value="culture">Culture</option>
+                </select>
+                <span class="error-message" id="categorieError"></span>
+              </div>
+            </div>
+            <div class="inputBox">
+              <label for="">Message</label>
+              <textarea
+                name="message"
+                id="message"
+                placeholder="votre message..."
+              ></textarea>
+              <span class="error-message" id="messageError"></span>
+            </div>
+            <div class="inputBox">
+              <input type="submit" value="Ajouter" />
+            </div>
+          </form>
+        </div>
+        <div class="img-content">
+          <img
+            src="img/idea-text-written-with-felt-pen-crumpled-ball-paper-with-hand-drawn-light-bulb.jpg"
+            alt=""
+          />
+        </div>
+      </section>
+      <div
+        id="generalError"
+        class="generalError"
+        style="display: none; color: red"
+      ></div>
+      <div id="listIdee" class="list-idee"></div>
+      <section class="idee-conteneur">
+        <div id="listIdee" class="card-container"></div>
+      </section>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
