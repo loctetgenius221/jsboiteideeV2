@@ -1,6 +1,12 @@
 // @ts-nocheck
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+  "https://lnuhmrfpkfxkdruisdbf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxudWhtcmZwa2Z4a2RydWlzZGJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjEwMDU2ODEsImV4cCI6MjAzNjU4MTY4MX0.1tZHnLYagUVk6wx1B2225f6ugGrRtm_25aIfDxTtKpg"
+);
+
 document.addEventListener("DOMContentLoaded", function () {
-  // On récupère nos données
   const formSection = document.getElementById("form-section");
   const formulaire = document.getElementById("formulaire");
   const libelleInput = document.getElementById("libelle");
@@ -11,19 +17,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const categorieError = document.getElementById("categorieError");
   const messageError = document.getElementById("messageError");
   const listIdee = document.getElementById("listIdee");
-  const generalError = document.getElementById("generalError");
+  const generalErrorPopup = document.getElementById("generalErrorPopup");
 
   const tableCategorie = ["politique", "économie", "social", "culture"];
-
-  let idee = JSON.parse(localStorage.getItem("idee")) || [];
-
-  afficherIdees();
 
   libelleInput.addEventListener("blur", validerLibelle);
   categorieSelect.addEventListener("blur", validerCategorie);
   messageInput.addEventListener("blur", validerMessage);
 
-  formulaire.addEventListener("submit", function (event) {
+  formulaire.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const isLibelleValid = validerLibelle();
@@ -31,120 +33,135 @@ document.addEventListener("DOMContentLoaded", function () {
     const isMessageValid = validerMessage();
 
     if (!isLibelleValid || !isCategorieValid || !isMessageValid) {
-      if (
-        !libelleInput.value &&
-        !categorieSelect.value &&
-        !messageInput.value
-      ) {
-        afficherPopupErreur("Veuillez remplir tous les champs requis");
-      }
+      afficherPopupErreur("Veuillez remplir tous les champs requis");
     } else {
-      ajouterIdee();
+      await ajouterIdeeSupabase();
       formulaire.reset();
     }
   });
 
-  messageInput.addEventListener("input", function () {
-    let message = messageInput.value.trim();
-    if (message.length > 255) {
-      messageInput.value = message.substring(0, 255);
-    }
-  });
-
-  libelleInput.addEventListener("input", function () {
-    let libelle = libelleInput.value.trim();
-    if (libelle.length > 50) {
-      libelleInput.value = libelle.substring(0, 50);
-    }
-  });
-
-  function ajouterIdee() {
-    let nouvelleIdee = {
+  async function ajouterIdeeSupabase() {
+    const nouvelleIdee = {
       libelle: libelleInput.value.trim(),
       categorie: categorieSelect.value,
       message: messageInput.value.trim(),
       approuvee: false,
     };
 
-    idee.push(nouvelleIdee);
-    localStorage.setItem("idee", JSON.stringify(idee));
-    afficherIdees();
+    const { data, error } = await supabase.from("ideas").insert([nouvelleIdee]);
+
+    if (error) {
+      afficherPopupErreur("Erreur lors de l'ajout de l'idée");
+    } else {
+      afficherIdees();
+    }
   }
 
   function afficherIdees() {
-    listIdee.innerHTML = "";
+    supabase
+      .from("ideas")
+      .select("*")
+      .then(({ data: ideas, error }) => {
+        if (error) {
+          afficherPopupErreur(
+            "Erreur lors de la récupération des idées depuis Supabase"
+          );
+          console.error(error);
+          return;
+        }
 
-    idee.forEach((item, index) => {
-      let card = document.createElement("div");
-      card.className = "card";
+        listIdee.innerHTML = "";
 
-      if (item.approuvee === true) {
-        card.classList.add("approved");
-      } else if (item.approuvee === false) {
-        card.classList.add("disapproved");
-      }
+        ideas.forEach((item) => {
+          let card = document.createElement("div");
+          card.className = "card";
 
-      let libelle = document.createElement("h3");
-      libelle.textContent = item.libelle;
+          if (item.approuvee) {
+            card.classList.add("approved");
+          } else if (item.approuvee === false) {
+            card.classList.add("disapproved");
+          }
 
-      let categorie = document.createElement("p");
-      categorie.className = "card-category";
-      categorie.textContent = `Catégorie: ${item.categorie}`;
+          let libelle = document.createElement("h3");
+          libelle.textContent = item.libelle;
 
-      let message = document.createElement("p");
-      message.textContent = item.message;
+          let categorie = document.createElement("p");
+          categorie.className = "card-category";
+          categorie.textContent = `Catégorie: ${item.categorie}`;
 
-      let cardButtons = document.createElement("div");
-      cardButtons.className = "card-buttons";
+          let message = document.createElement("p");
+          message.textContent = item.message;
 
-      let deleteButton = document.createElement("button");
-      deleteButton.textContent = "Supprimer";
-      deleteButton.addEventListener("click", () => supprimerIdee(index));
+          let cardButtons = document.createElement("div");
+          cardButtons.className = "card-buttons";
 
-      let approveButton = document.createElement("button");
-      approveButton.textContent = "Approuver";
-      approveButton.style.display = item.approuvee ? "none" : "block";
-      approveButton.addEventListener("click", () => approuverIdee(index));
+          let deleteButton = document.createElement("button");
+          deleteButton.textContent = "Supprimer";
+          deleteButton.addEventListener("click", () => supprimerIdee(item.id));
 
-      let disapproveButton = document.createElement("button");
-      disapproveButton.textContent = "Désapprouver";
-      disapproveButton.style.display = item.approuvee ? "block" : "none";
-      disapproveButton.addEventListener("click", () => desapprouverIdee(index));
+          let approveButton = document.createElement("button");
+          approveButton.textContent = "Approuver";
+          approveButton.style.display = item.approuvee ? "none" : "block";
+          approveButton.addEventListener("click", () => approuverIdee(item.id));
 
-      cardButtons.appendChild(deleteButton);
-      cardButtons.appendChild(approveButton);
-      cardButtons.appendChild(disapproveButton);
+          let disapproveButton = document.createElement("button");
+          disapproveButton.textContent = "Désapprouver";
+          disapproveButton.style.display = item.approuvee ? "block" : "none";
+          disapproveButton.addEventListener("click", () =>
+            desapprouverIdee(item.id)
+          );
 
-      card.appendChild(libelle);
-      card.appendChild(categorie);
-      card.appendChild(message);
-      card.appendChild(cardButtons);
+          cardButtons.appendChild(deleteButton);
+          cardButtons.appendChild(approveButton);
+          cardButtons.appendChild(disapproveButton);
 
-      listIdee.appendChild(card);
-    });
+          card.appendChild(libelle);
+          card.appendChild(categorie);
+          card.appendChild(message);
+          card.appendChild(cardButtons);
+
+          listIdee.appendChild(card);
+        });
+      });
   }
 
-  function supprimerIdee(index) {
-    idee.splice(index, 1);
-    localStorage.setItem("idee", JSON.stringify(idee));
-    afficherIdees();
+  async function supprimerIdee(id) {
+    const { error } = await supabase.from("ideas").delete().eq("id", id);
+
+    if (error) {
+      afficherPopupErreur("Erreur lors de la suppression de l'idée");
+    } else {
+      afficherIdees();
+    }
   }
 
-  function approuverIdee(index) {
-    idee[index].approuvee = true;
-    localStorage.setItem("idee", JSON.stringify(idee));
-    afficherIdees();
+  async function approuverIdee(id) {
+    const { error } = await supabase
+      .from("ideas")
+      .update({ approuvee: true })
+      .eq("id", id);
+
+    if (error) {
+      afficherPopupErreur("Erreur lors de l'approbation de l'idée");
+    } else {
+      afficherIdees();
+    }
   }
 
-  function desapprouverIdee(index) {
-    idee[index].approuvee = false;
-    localStorage.setItem("idee", JSON.stringify(idee));
-    afficherIdees();
+  async function desapprouverIdee(id) {
+    const { error } = await supabase
+      .from("ideas")
+      .update({ approuvee: false })
+      .eq("id", id);
+
+    if (error) {
+      afficherPopupErreur("Erreur lors de la désapprobation de l'idée");
+    } else {
+      afficherIdees();
+    }
   }
 
   function afficherPopupErreur(message) {
-    const generalErrorPopup = document.getElementById("generalErrorPopup");
-
     generalErrorPopup.textContent = message;
     generalErrorPopup.style.display = "block";
     formSection.style.display = "none";
@@ -155,11 +172,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 2000);
   }
 
-  // On crée nos fonctions pour valider chaque champ
   function validerLibelle() {
     let libelle = libelleInput.value.trim();
     let monRegex =
       /^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\s]+$/;
+
     if (libelle.length < 3 || libelle.length > 50) {
       libelleError.textContent =
         "Le champ doit comporter entre 3 et 50 caractères";
@@ -212,4 +229,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return true;
     }
   }
+
+  afficherIdees();
 });
